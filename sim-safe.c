@@ -126,6 +126,9 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   stat_reg_counter(sdb, "sim_num_int_insn",
 		   "total number of integer computation instructions executed",
 		   &sim_num_int_insn, sim_num_int_insn, NULL);
+  stat_reg_counter(sdb, "sim_num_fp_insn",
+		   "total number of FP computation instructions executed",
+		   &sim_num_fp_insn, sim_num_fp_insn, NULL);
   stat_reg_counter(sdb, "sim_num_refs",
 		   "total number of loads and stores executed",
 		   &sim_num_refs, 0, NULL);
@@ -268,11 +271,6 @@ sim_uninit(void)
 /* system call handler macro */
 #define SYSCALL(INST)	sys_syscall(&regs, mem_access, mem, INST, TRUE)
 
-void
-add_insn_cnt(){
-
-}
-
 /* start simulation, program loaded, processor precise state initialized */
 void
 sim_main(void)
@@ -357,6 +355,10 @@ sim_main(void)
       if (MD_OP_FLAGS(op) & F_ICOMP)
   {
     sim_num_int_insn++;
+  }
+      if (MD_OP_FLAGS(op) & F_FCOMP)
+  {
+    sim_num_fp_insn++;
   }
       /* check for DLite debugger entry condition */
       if (dlite_check_break(regs.regs_NPC,
